@@ -33,7 +33,7 @@ The impetus behind this search application is to provide one stop search for can
 
 This is a dockerized application. To run the application, you need to have docker installed on your machine. Once, you have docker installed, you can run the application by following steps:
 
-First of all, you need to get SEERS API key and store it in a file called `.env` in the a root directory of the backend. The file should look like this:
+First of all, you need to get SEERS API key and store it in a file called `.env` in the a root directory of the backend. You can get the api key by registering here: https://api.seer.cancer.gov/. The file should look like this:
 
 ``` bash
 SEERS_API_KEY=<your_api_key>
@@ -79,6 +79,16 @@ Application is using Trees which are modelled on the Decision Trees. Following m
 Here, root node is the search term of any cancer related information, be it cancer type, cancer stage, cancer treatment, cancer drugs, etc. Then, application is using Trees which are modelled on the Decision Trees to segregate the search terms into different categories. Following mind map shows the structure of the tree:
 
 Search Term -> Age -> Gender -> Phase -> Status -> Clusters of records
+
+Following tree strucutre is to better understand the data structure implemented in the application. The following tree structure can be understood as follows: 
+
+- 1000 records are fetched from ClinicalTrials.gov API.
+- First level is search term, in this case, it is `Glioma`.
+- Second level is age, so filters are `Child` and `Adult`, `Older Adult`.
+- Third level is gender, so filters are `All`, `Female`, `Male`.
+- Fourth level is phase, so filters are `Early Phase 1`, `Phase 1`, `Phase 2`, `Phase 3`, `Phase 4`, `Not Applicable`.
+- Fifth level is status, so filters are `Not yet recruiting`, `Recruiting`, `Enrolling by invitation`, `Active, not recruiting`, `Completed`, `Terminated`, `Suspended`, `Withdrawn`, `Unknown status`.
+- Sixth level has the cluster of records, which are segregated based on previous filters.
 
 Following tree strucutre is to better understand the data structure implemented in the application. The following tree structure can be understood as follows: 
 
@@ -645,4 +655,4 @@ Following tree strucutre is to better understand the data structure implemented 
                     |__Withdrawn (44 records)
                     |__Unknown status (28 records)
 
-The rationale behind implementing this Tree data structure is to allow for a more efficient search of the data. Application would do a GET request and bulk fetch records from the data source. Then, whenever an user wants to apply a filter, then application would simply traverse the tree and fetch the records that match the filter criteria. This would allow application to not make multiple requests to the remote data source. This would be much more efficient than doing a database query for each filter, or even worse, fetching all the records and then applying the filter on the client side.
+The present implementation of the Tree data structure is motivated by the desire to enhance the efficiency of data search. Specifically, by utilizing a GET request to bulk fetch records from the data source, and subsequently traversing the tree to retrieve records that match the filter criteria, the application can minimize requests to the remote data source and optimize computational resources. This approach is significantly more efficient compared to executing a database query for each filter or fetching all records and applying the filter on the client side. Consequently, by adopting the Tree data structure to store ClinicalTrials data, the application can streamline its operations by reducing computational burden and processing time.
