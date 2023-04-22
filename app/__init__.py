@@ -19,7 +19,10 @@ db = SQLAlchemy(app)
 # Load environment variables
 load_dotenv()
 
-# Setup the database
+# Import routing, models, and start the app
+from app import views, models
+
+# Setup the database on startup
 @app.before_first_request
 def setup():
     # delete the database file if it exists currently
@@ -29,6 +32,4 @@ def setup():
     # create the database and the db table
     db.create_all()
 
-
-# Import routing, models, and start the app
-from app import views, models
+    views.seers_data()
