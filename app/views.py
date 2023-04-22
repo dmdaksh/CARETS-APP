@@ -188,6 +188,7 @@ def get_clinical_trials():
                 eligibility_criteria=find_tag(clinical_trial, "EligibilityCriteria"),
                 investigator=find_tag(clinical_trial, "OverallOfficial"),
                 collaborators=find_tag(clinical_trial, "Collaborator"),
+                nct_id=find_tag(clinical_trial, "NCTId"),
 
             )
             # make sure we don't have duplicates

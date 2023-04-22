@@ -107,6 +107,7 @@ class ClinicalTrials(db.Model):
     eligibility_criteria: str = db.Column(db.String(1000))
     investigator: dict = db.Column(JSON)
     collaborators: dict = db.Column(JSON)
+    nct_id: str = db.Column(db.String(100))
 
     def __repr__(self):
         return f"{self.term} - {self.title}: {self.phase}"
