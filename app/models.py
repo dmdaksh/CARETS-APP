@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 from sqlalchemy import types
+from sqlalchemy.dialects.postgresql import JSONB, JSON
+import json
 
 from app import db
 
@@ -89,11 +91,22 @@ class ClinicalTrials(db.Model):
     __tablename__ = "clinical_trials"
     term: str = db.Column(db.String(100), primary_key=True)
     title: str = db.Column(db.String(1000), primary_key=True)
+    official_title: str = db.Column(db.String(1000))
     phase: str = db.Column(db.String(100))
     status: str = db.Column(db.String(100))
     age: list = db.Column(db.String(100))
     gender: str = db.Column(db.String(100))
     description: str = db.Column(db.String(10000))
+    summary: str = db.Column(db.String(10000))
+    study_type: str = db.Column(db.String(100))
+    study_design: dict = db.Column(JSON)
+    condition: str = db.Column(db.String(100))
+    intervention: dict = db.Column(JSON)
+    study_completion_date: str = db.Column(db.String(100))
+    primary_completion_date: str = db.Column(db.String(100))
+    eligibility_criteria: str = db.Column(db.String(1000))
+    investigator: dict = db.Column(JSON)
+    collaborators: dict = db.Column(JSON)
 
     def __repr__(self):
         return f"{self.term} - {self.title}: {self.phase}"
@@ -142,6 +155,14 @@ class ClinicalTrials(db.Model):
             return False
         return self.term == other.term and self.title == other.title
 
+    @classmethod
+    def to_json(cls, trials):
+        def default(obj):
+            if isinstance(obj, ClinicalTrials):
+                return obj.__dict__
+            return obj
+
+        return json.dumps(trials, default=default)
 
 @dataclass
 class ClinicalTrialsFilters:
@@ -166,3 +187,4 @@ class ClinicalTrialsFilters:
         "Withdrawn",
         "Unknown status",
     )
+

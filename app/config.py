@@ -10,3 +10,5 @@ class Config:
         os.path.abspath(os.path.dirname(__file__)), "app.db"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    CORS_HEADERS = "Content-Type"

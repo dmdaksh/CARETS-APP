@@ -176,7 +176,19 @@ def get_clinical_trials():
                 # gender='' if clinical_trial.get("Study", {}).get("ProtocolSection", {}).get("StatusModule", {}).get("Gender", None) is None else  clinical_trial.get("Study", {}).get("ProtocolSection", {}).get("StatusModule", {}).get("Gender", None),
                 gender=find_tag(clinical_trial, "Gender"),
                 # description=clinical_trial.get("Study", {}).get("ProtocolSection", {}).get("DescriptionModule", {}).get("DetailedDescription", None),
-                description=find_tag(clinical_trial, "BriefSummary"),
+                description=find_tag(clinical_trial, "DetailedDescription"),
+                official_title=find_tag(clinical_trial, "OfficialTitle"),
+                summary=find_tag(clinical_trial, "BriefSummary"),
+                study_type=find_tag(clinical_trial, "StudyType"),
+                study_design=find_tag(clinical_trial, "DesignInfo"),
+                condition=find_tag(clinical_trial, "Condition")[0],
+                intervention=find_tag(clinical_trial, "Intervention"),
+                study_completion_date=find_tag(clinical_trial, "CompletionDate"),
+                primary_completion_date=find_tag(clinical_trial, "PrimaryCompletionDate"),
+                eligibility_criteria=find_tag(clinical_trial, "EligibilityCriteria"),
+                investigator=find_tag(clinical_trial, "OverallOfficial"),
+                collaborators=find_tag(clinical_trial, "Collaborator"),
+
             )
             # make sure we don't have duplicates
             if ct not in clinical_trials_objects:
@@ -199,6 +211,11 @@ def get_clinical_trials():
     # print(f'root records {len(root.records)}')
     # create tree
     root.create_search_tree()
+
+    # store tree to json file
+    tree_dict = root.to_dict()
+    with open("clinical_trials_tree.json", "w") as f:
+        json.dump(tree_dict, f, indent=4)
 
     # return jsonify(root.serialize())
     # make dataclasses as dict and return

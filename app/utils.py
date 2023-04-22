@@ -1,6 +1,7 @@
 from app.models import ClinicalTrials, ClinicalTrialsFilters
 from dataclasses import asdict
 from typing import List
+import json
 
 
 class SearchTreeNode:
@@ -142,6 +143,26 @@ class SearchTreeNode:
                 tree_dict[current_node.value] = current_node.records
 
         return tree_dict
+    
+    # store tree in a dictionary
+    def to_dict(self):
+        tree_dict = {}
+        tree_dict["type"] = self.type
+        tree_dict["value"] = self.value
+        tree_dict["records"] = [asdict(record) for record in self.records]
+        tree_dict["children"] = [child.to_dict() for child in self.children]
+        return tree_dict 
+    
+    # read dictionary and create tree
+    @classmethod
+    def from_dict(cls, tree_dict):
+        node = cls(tree_dict["type"], tree_dict["value"])
+        node.records = [ClinicalTrials(**record) for record in tree_dict["records"]]
+        node.children = [cls.from_dict(child) for child in tree_dict["children"]]
+        # assign parent to children
+        for child in node.children:
+            child.parent = node
+        return node
 
 
 
@@ -169,7 +190,7 @@ if __name__ == "__main__":
 
     ctf = ClinicalTrialsFilters()
     ctf_dict = asdict(ctf)
-    n = 10000
+    n = 1000
     print(f"creating {n} records")
     start_time = time.time()
     # randomly initialize 25 ClinicalTrials records
@@ -185,34 +206,6 @@ if __name__ == "__main__":
         root.records.append(ct)
 
     print(f"created {n} records in {time.time() - start_time} seconds")
-    # create queue
-    # queue = [root]
-
-    # filter_queue = list(ctf_dict.keys())
-    # next_queue = queue.copy()
-    # while filter_queue:
-    #     current_filter = filter_queue.pop(0)
-    #     queue = next_queue.copy()
-    #     next_queue = []
-    #     while queue:
-    #         current_node = queue.pop(0)
-    #         # create a dictionary of filter values and empty lists
-    #         filter_value_bins = {filter_value: [] for filter_value in ctf_dict[current_filter]}
-
-    #         # loop through records and put in a bin for each filter value
-    #         for ct in current_node.records:
-    #             filter_value_bins[getattr(ct, current_filter)].append(ct)
-
-    #         # loop through bins and create children
-    #         for filter_value, bin in filter_value_bins.items():
-    #             child = SearchTreeNode(current_filter, filter_value)
-    #             current_node.add_child(child)
-    #             # add records to children
-    #             child.records = bin
-    #             next_queue.append(child)
-
-    #         # free records from parent
-    #         current_node.records = []
 
     print("creating search tree")
     start_time = time.time()
@@ -220,45 +213,49 @@ if __name__ == "__main__":
     # root.create_search_tree()
     print(f"created search tree in {time.time() - start_time} seconds")
 
+    print('\n\n')
+    print('=====================')
+    print('\n\n')
     test_filters = {
         "phase": ["Phase 1", "Phase 2"],
         "status": ["Recruiting", "Active, not recruiting"],
     }
 
-    # # add all filter values whose filter type is not in test_filters
-    # for filter_type, filter_values in ctf_dict.items():
-    #     if filter_type not in test_filters:
-    #         test_filters[filter_type] = filter_values
-
-    # # traverse tree and arrive at "n" leaves nodes based on test_filters
-
-    # search_results = []
-
-    # num_leaves = 10
-    # stack = [root]
-
-    # while num_leaves > 0 and stack:
-    #     current_node = stack.pop()
-    #     print(f'popped {current_node.value} from stack')
-    #     if current_node.children:
-    #         for child in current_node.children:
-    #             if child.type in test_filters:
-    #                 if child.value in test_filters[child.type]:
-    #                     print(f'adding {child.value} to stack')
-    #                     stack.append(child)
-    #             else:
-    #                 # in this case, we want to add all children to the stack
-    #                 # beceause we don't have a filter for this type
-    #                 print(f'ADDING {child.value} to stack')
-    #                 stack.append(child)
-    #     else:
-    #         num_leaves -= len(current_node.records)
-    #         search_results.extend(current_node.records)
-
     print("getting filtered records")
     start_time = time.time()
     print(len(root.get_filtered_records(test_filters, 1000)))
     print(f"got filtered records in {time.time() - start_time} seconds")
+
+    print('\n\n')
+    print('=====================')
+    print('\n\n')
+     # store tree in dictionary
+    print("storing tree")
+    start_time = time.time()
+    tree_dict = root.to_dict()
+    print(f"stored tree in {time.time() - start_time} seconds")
+
+    # # save tree to json file
+    print("saving tree to json file")
+    with open("app/.cache/tree.json", "w") as f:
+        json.dump(tree_dict, f, indent=4)
+    print(f"saved tree to json file")
+
+    print('\n\n')
+    print('=====================')
+    print('\n\n')
+    # read tree from json file
+    with open("clinical_trials_tree.json", "r") as f:
+        tree_dict = json.load(f)
+
+    # create tree from dictionary
+    print("creating tree from dictionary")
+    start_time = time.time()
+    root = SearchTreeNode.from_dict(tree_dict)
+    print(f"created tree from dictionary in {time.time() - start_time} seconds")
+
+    # print tree
+    root.print_tree()
 
 
 ############## test code ################
