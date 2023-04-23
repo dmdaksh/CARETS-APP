@@ -1,6 +1,6 @@
 # CARETS APP
 <!-- Put an image -->
-![CARETS-APP](img/thumbnail.png)
+![CARETS-APP](backend/img/thumbnail.png)
 
 
 ## CA-ncer
@@ -74,7 +74,7 @@ These are the list of python libraries other than python inbuilt libraries used 
 
 Application is using Trees which are modelled on the Decision Trees. Following mind map shows the structure of the tree:
 
-![CARETS-APP](img/tree_structure.png)
+![CARETS-APP](backend/img/tree_structure.png)
 
 Here, root node is the search term of any cancer related information, be it cancer type, cancer stage, cancer treatment, cancer drugs, etc. Then, application is using Trees which are modelled on the Decision Trees to segregate the search terms into different categories. Following mind map shows the structure of the tree:
 
