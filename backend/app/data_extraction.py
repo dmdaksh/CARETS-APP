@@ -280,7 +280,7 @@ def get_clinicaltrials_gov(args, max_results=1000, num_workers=4):
                 break
 
     # # write cache
-    with open("app/.cache/clinical_trials_data.json", "w") as f:
+    with open("clinical_trials_data.json", "w") as f:
         json.dump(results, f, indent=2)
 
     return results
