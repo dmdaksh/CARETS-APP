@@ -228,7 +228,7 @@ def get_clinical_trials():
 def gdc_cases():
     primary_diagnosis = request.args.get("primary_diagnosis", default="", type=str)
     from_idx = request.args.get("from", default=0, type=int)
-    size_idx = request.args.get("size", default=100, type=int)
+    size_idx = request.args.get("size", default=10, type=int)
 
     print(primary_diagnosis, from_idx, size_idx)
     filter = {
