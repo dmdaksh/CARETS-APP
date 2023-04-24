@@ -45,7 +45,7 @@ def get_seers_disease_data(
             # Wait for all URL fetches to complete
             for future in concurrent.futures.as_completed(future_list):
                 response = future.result()
-                if "results" in response:
+                if response and "results" in response:
                     results.extend(response["results"])
                     offset += count
                     urls = [
@@ -97,7 +97,7 @@ def get_seers_glossary_data(
             # Wait for all URL fetches to complete
             for future in concurrent.futures.as_completed(future_list):
                 response = future.result()
-                if "results" in response:
+                if response and "results" in response:
                     results.extend(response["results"])
                     offset += count
                     urls = [
@@ -147,7 +147,7 @@ def get_seers_rx_data(
             # Wait for all URL fetches to complete
             for future in concurrent.futures.as_completed(future_list):
                 response = future.result()
-                if "results" in response:
+                if response and "results" in response:
                     results.extend(response["results"])
                     offset += count
                     urls = [
