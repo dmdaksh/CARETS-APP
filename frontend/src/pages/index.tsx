@@ -1,13 +1,14 @@
-import { Inter } from 'next/font/google'
 import {AutoComplete, Descriptions, Image, Input, Modal, Progress, Table, Tabs, Typography} from "antd";
 import React, {useEffect, useState} from "react";
 import _, {set} from "lodash";
 import {ColumnsType} from "antd/lib/table";
+import axios from "axios";
+import { useInterval } from "@/customHooks";
 const {Title, Text} = Typography;
 
-// const inter = Inter({ subsets: ['latin'] })
-
 export default function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [initialQuote, setInitialQuote] = useState<any>({quote: '', author: ''});
   const [options, setOptions] = useState<any[]>([]);
   const [activeResult, setActiveResult] = useState<string>('');
   const [activeTab, setActiveTab] = useState('clinicalTrials');
@@ -18,6 +19,8 @@ export default function Home() {
   const [modalData, setModalData] = useState<any>(null);
   const [quote, setQuote] = useState<any>({quote: '', author: ''});
   const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [dotNumber, setDotNumber] = useState(5);
   const fetchSelectedOptionCasesData = (value: string) => {
         fetch(`http://127.0.0.1:5000/gdc_cases?primary_diagnosis=${value}`, {
             method: 'GET',
@@ -26,6 +29,20 @@ export default function Home() {
                 setSelectedOptionCasesData(data)
             })
   }
+  useInterval(() => {
+    getInitialQuote()
+  }, 5000)
+  useEffect(() => {
+    getInitialQuote();
+    axios({
+        url: 'http://127.0.0.1:5000',
+        timeout: 100000,
+    })
+    .then((data) => {
+        console.log('hello')
+        setInitialLoad(false);
+    })
+  }, [])
     const fetchSelectedOptionClinicalData = (value: string) => {
         fetch(`http://127.0.0.1:5000/clinical_trials?expr=${value}`, {
             method: 'GET',
@@ -75,6 +92,28 @@ export default function Home() {
             })
         })
   }
+  const getInitialQuote = () => {
+        fetch(`https://type.fit/api/quotes`, {
+            method: 'GET',
+        }).then((response) => response.json())
+        .then((data) => {
+            const randomIndex = _.random(0, data.length - 1);
+            setInitialQuote({
+                quote: data[randomIndex].text,
+                author: data[randomIndex].author,
+            })
+        })
+    }
+  useEffect(() => {
+    setTimeout(() => {
+        if (dotNumber === 5) {
+            setDotNumber(0)
+        }
+        else {
+            setDotNumber(dotNumber + 1)
+        }
+    }, 200)
+  }, [dotNumber])
   const getNewOptions = (text: string) => {
       fetch(`http://127.0.0.1:5000/search_terms?term=${text}`, {
           method: 'GET',
@@ -292,7 +331,9 @@ export default function Home() {
     ]
   return (
     <>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: '2rem'}}>
+        {
+            !initialLoad ?
+            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: '2rem'}}>
             <Modal
                 open={isModalVisible}
                 width={'75vw'}
@@ -380,6 +421,17 @@ export default function Home() {
                     size="large"
                     placeholder="input here"
                     style={{width: '80vw'}}
+                    onChange={(event) => {
+                        setSearchTerm(event.target.value)
+                    }}
+                    onPressEnter={(event) => {
+                        setSelectedOptionCasesData(undefined);
+                        setSelectedOptionClinicalData(undefined);
+                        setProgressBarPercent(0)
+                        setActiveResult(searchTerm)
+                        fetchSelectedOptionCasesData(searchTerm)
+                        fetchSelectedOptionClinicalData(searchTerm)
+                    }}
                 />
             </AutoComplete>
             {
@@ -427,10 +479,25 @@ export default function Home() {
                 </div> :
                 null
             }
+        </div> : 
+        <div
+            style={{height: '100vh', width: '100vw', justifyContent: 'center', alignItems: 'center'}}
+        >
+            <Title style={{marginLeft: '45vw', marginTop: '35vh'}}>
+                Initializing{_.join(_.map(_.range(dotNumber), (item) => {
+                    return '.'
+                }), '')}
+            </Title>
+            <div style={{marginLeft: '17.5vw', display: 'flex', width: '70vw', paddingLeft: '10vw',  paddingRight: '10vw', flexDirection: 'column', alignItems: 'center'}}>
+                <Text style={{fontSize: '2rem'}}>
+                    {initialQuote.quote}
+                </Text>
+                <Text style={{fontSize: '1.5rem', color: '#656565'}}>
+                    {'-'}{initialQuote.author ?? 'Unknown'}
+                </Text>
+            </div>
         </div>
-      {/*<Text style={{}}>*/}
-
-      {/*</Text>*/}
+        }
     </>
   )
 }

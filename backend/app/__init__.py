@@ -23,8 +23,8 @@ load_dotenv()
 @app.before_first_request
 def setup():
     # # delete the database file if it exists currently
-    # if os.path.exists("app/app.db"):
-    #     os.remove("app/app.db")
+    if os.path.exists("app/app.db"):
+        os.remove("app/app.db")
 
     # create the database and the db table
     db.create_all()
