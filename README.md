@@ -26,7 +26,7 @@
 
 ### One stop search application for cancer and related terms.
 
-The impetus behind this search application is to provide one stop search for cancer and related terms. User can search for cancer and related terms and get results about the clinical trials and case studies. The application is built using Flask and Next.js.
+The impetus behind this search application is to provide one stop search for cancer and related terms. User get autosuggestions for search terms and user can search for cancer and related terms and get results about the clinical trials and case studies. User can see clinical trials in an overlay table and apply filters to filter trials as well as see case studies and open GDC case studies page. The application is built using Flask and Next.js.
 
 
 ## Usage
