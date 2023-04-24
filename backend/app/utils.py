@@ -45,7 +45,7 @@ class SearchTreeNode:
     #             search_terms.extend(child.get_search_terms())
     #     return search_terms
 
-    def create_search_tree(self):
+    def create_search_tree(self, test=False):
         ctf = ClinicalTrialsFilters()
         ctf_dict = asdict(ctf)
         filter_queue = list(ctf_dict.keys())
@@ -70,8 +70,9 @@ class SearchTreeNode:
                         # if attrs is None, add to all bins
                         attrs = ctf_dict[current_filter]
                     # print(f'attrs: {attrs}')
-                    if current_filter == 'age' or current_filter == 'phase':
-                        attrs = attrs.split(',')
+                    if not test:
+                        if current_filter == 'age' or current_filter == 'phase':
+                            attrs = attrs.split(',')
                     if isinstance(attrs, str):
                         attrs = [attrs]
                     for attr in attrs:
@@ -209,7 +210,7 @@ if __name__ == "__main__":
 
     print("creating search tree")
     start_time = time.time()
-    root.create_search_tree().print_tree()
+    root.create_search_tree(test=True).print_tree()
     # root.create_search_tree()
     print(f"created search tree in {time.time() - start_time} seconds")
 
