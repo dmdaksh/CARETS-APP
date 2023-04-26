@@ -33,7 +33,7 @@ The impetus behind this search application is to provide one stop search for can
 
 This is a dockerized application. To run the application, you need to have docker installed on your machine. Once, you have docker installed, you can run the application by following steps:
 
-First of all, you need to get SEERS API key and store it in a file called `.env` in the a root directory of the backend. You can get the api key by registering here: https://api.seer.cancer.gov/. The file should look like this:
+First of all, you need to get SEERS API key and store it in a file called `.env` in the backend dir. You can get the api key by registering here: https://api.seer.cancer.gov/. The file should look like this:
 
 ``` bash
 SEERS_API_KEY=<your_api_key>
@@ -80,17 +80,7 @@ Here, root node is the search term of any cancer related information, be it canc
 
 Search Term -> Age -> Gender -> Phase -> Status -> Clusters of records
 
-Following tree strucutre is to better understand the data structure implemented in the application. The following tree structure can be understood as follows: 
-
-- 1000 records are fetched from ClinicalTrials.gov API.
-- First level is search term, in this case, it is `Glioma`.
-- Second level is age, so filters are `Child` and `Adult`, `Older Adult`.
-- Third level is gender, so filters are `All`, `Female`, `Male`.
-- Fourth level is phase, so filters are `Early Phase 1`, `Phase 1`, `Phase 2`, `Phase 3`, `Phase 4`, `Not Applicable`.
-- Fifth level is status, so filters are `Not yet recruiting`, `Recruiting`, `Enrolling by invitation`, `Active, not recruiting`, `Completed`, `Terminated`, `Suspended`, `Withdrawn`, `Unknown status`.
-- Sixth level has the cluster of records, which are segregated based on previous filters.
-
-Following tree strucutre is to better understand the data structure implemented in the application. The following tree structure can be understood as follows: 
+Following tree structure is to better understand the data structure implemented in the application. The following tree structure can be understood as follows: 
 
 - 1000 records are fetched from ClinicalTrials.gov API.
 - First level is search term, in this case, it is `Glioma`.
