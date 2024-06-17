@@ -28,6 +28,7 @@
 
 The impetus behind this search application is to provide one stop search for cancer and related terms. User get autosuggestions for search terms and user can search for cancer and related terms and get results about the clinical trials and case studies. User can see clinical trials in an overlay table and apply filters to filter trials as well as see case studies and open GDC case studies page. The application is built using Flask and Next.js.
 
+### [![Demo Video](https://img.youtube.com/vi/v-t8rwIVHYw/0.jpg)](https://www.youtube.com/watch?v=v-t8rwIVHYw)
 
 ## Usage
 
